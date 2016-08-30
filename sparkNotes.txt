@@ -1,0 +1,215 @@
+- run spark-shell which opens a scala shell instance
+- val textFile = sc.textFile("CHANGES.txt")
+  - created a object of the text file
+  - textFile.count() gives how many lines
+
+Scala Basics
+  - spark is build with scala
+  - looks kinda like python code
+  - runs on top of the JVM
+  - can access java classes
+  -
+  - Variables
+    - immutable constants prefixed with val
+      - val hello: String = "hola!"
+    - mutable variables like this
+      - var helloThere: String = "hello!"
+    - uses of immutable variables are encouraged in scala because its a functional language
+    - scala can implicitly figure out the type sometimes
+      - ex: val moreStuff = "blah"
+  - DataTypes
+    - val numberOne : Int = 1                         //> numberOne  : Int = 1
+    - val truth : Boolean = true                      //> truth  : Boolean = true
+    - val letterA : Char = 'a'                        //> letterA  : Char = a
+    - val pi : Double = 3.14159265                    //> pi  : Double = 3.14159265
+    - val piSinglePrecision : Float = 3.14159265f     //> piSinglePrecision  : Float = 3.1415927
+    - val bigNumber : Long = 1234567890l              //> bigNumber  : Long = 1234567890
+    - val smallNumber : Byte = 127                    //> smallNumber  : Byte = 127
+  - Outputting lines
+    - can concatinate stuff with + sign
+    - println is a function which prints shit
+    - println("Here is a mess: " + numberOne + truth + letterA + pi + bigNumber)
+    - formatting numerical output
+      - if want to format text use f prefix
+        - println(f"Pi is about $piSinglePrecision%.3f")  //> Pi is about 3.142
+    - subsitute in variables into string
+      - use s prefix
+      - println(s"I can use the s prefix to use variables like $numberOne $truth $letterA")
+      - can evaluate an expression with s prefix also by doing like ${4+3}
+        - just make sure to put expression in curly brackets
+  - Regex
+    - this is how made
+      - val pattern = """.* ([\d]+).*""".r
+        - regex is between """ and """.r
+    - to run it, lets say your regex obj is called pattern, you run
+      - val ans = pattern("blah blah")
+  - Flow Control in scala
+    - can do if else in line
+      - if (1 >3) println("blah") else println("else")
+    - can do it with {} also
+    - no elsif in scala
+    - scala switch statement is called match
+      - val number = 4
+        number match {
+          case 1 => println("sdf")
+          case 2 => println("adsfs")
+          case _ => println("sdfsf")
+        }
+      - default case is _
+    - for loop
+      - for (x <- 1 to 4) {
+        val squared = x * x
+      }
+      - uses range
+    - while loop
+      while () {
+
+      }
+    - do while
+      - do { stuff} while ()
+    - expressions
+      - {val x = 10; x + 20}  is 30, so this is used as the value 30
+  - Functions
+    - start with def
+    - ex: def squareIt(x: Int) : Int = {
+            x * x
+          }
+    - pretty much takes expression and assigns it do func def
+    - functions can take other functions as parameters
+      - ex : def transformInt(x: Int, f: Int => Int) : Int = {}
+        - Int => Int means its a function which takes an int and returns an int
+    - can define a function in paramter
+      - ex: transformInt(3, x => x * x * x) or transformInt(2, x => {val y = x * 2; y * y})
+  - Data Structures
+    - tuple
+      - collection of stuff treated as object
+      - ex: val bla = ("sdf", "sdfsd", "dsfsd")
+      - data is 1 based indexed
+        - if want first thing, bla._1
+      - can mix datatypes in tuples
+    - Lists
+      - another collection object
+      - val shipList = ("ship1", "ship2")
+      - makes a linked list
+      - if want something form it, do shipList(0)
+      - LISTS ARE ZERO BASED wtf scala
+      - can get first item using .head
+      - using .tail gives a list without head
+      - can iterate thru lists like this
+        - for (ship <- shipList) {}
+      - can use map function to transform a list with an expression
+        - ex: shipList.map((ship: String) => {ship.reverse})
+      - can use reduct function to combine stuff in list
+        - val numberList = (1,2,3,4)
+          val sum = numberList.reduce((x: Int, y: Int) => x +y)
+      - filter can be used to create sublists based on defined filter function
+        - ex: numberList.filter((x: Int) => x != 5)
+        - boolean decides which vals pass thrrough
+        - numberList.filter(_ != 5) is the same as above
+      - concatinate lists with ++ operater
+        - list1 ++ list2
+      - .sorted returns a sorted version of the list
+      - .reverse reverses it
+      - .distinct returns a list with no dups
+      - .sum sums shit up
+      - .max finds max value
+      - .contains() checks list for a value
+    - Maps
+      - look up tables
+      - declare a map like this
+        - ex: shipMap = Map("Kirk" -> "enterprise")
+      - can do a lookup like this, shipMap("Kirk")
+      - map has a .contains function, which returns a bool
+      - or can check using try
+        - util.Try(shipMap("archer")) getOrElse "Unknown"
+
+- Spark
+  - take massive data sets and distribute processing among cluster of computers
+    - simpler than map reduce
+  - logic of spark is in driver program
+    - on the master node
+  - horizontally scalable
+  - very fast, faster than map reduce
+    - its fast cuz it uses directed acyclic graph
+  - can code it in scala, python, java
+  - resilient distrubted dataset
+    - key concept, various methods are on rdd
+  - spark has more components, such as spark sql, mllib, graphx, spark streaming
+    - all based on spark core
+  - RDD
+    - resilient
+      - distrubuted, so if a host dies, its still gnna work
+    - Distrinuted
+      - distributed across machines/file systems.
+      - can rep a MASSIVE data set, but be treated as a single object
+    - Dataset
+      - data
+  - when making a spark streaming project, have to make a spark context which initializes the rdd
+    - val ssc = new StreamingContect("local[*]", "LogAlarmer", Seconds(1))
+      - local[*] shows to use all cores
+      - Seconds(1) defines pull time
+    - can create rdds in other ways
+      - call parallelize (only useful for small scale and learning)
+      - sc.textFile load from text file, or hdfs
+      - can make rdd based of hive query also
+      - can connect to other systems like jdbc, cassandra, hbase, elasticesearch, json, etc
+  - Transforming an RDD
+    - map
+      - allows to run some function on every element in the dataset
+      - val input = sc.parallelize(List(1,2,3,4))
+        val result = input.map(x => x * x)
+    - flatmap
+      - can create a new rdd from one, with more or less data
+    - filter
+      - filter out data to create smaller more manageble rdd
+    - distinct
+      - discint rows in rdd
+    - sample
+      - gets a random sample
+    - union, intersection, subtract, cartesian
+  - Actions, to  produce output
+    - collect
+      - take a snapshot of rdd, and put it in a conventional data structure
+    - count
+      - how many rows in rdd
+    - countByValue
+      - break down count by unique values
+    - take
+      - gets top few results
+    - top
+    - reduce
+      - aggregate info in rdd
+  - nothing every happens in driver program until an action is called
+- Spark Streaming
+  - big data never stops
+  - analyze data streams in real time, instead of huge batch jobs
+  - analyzing sterams of web log data to react to user behavior
+  - analyze streams of real time sensor data for iot stuff
+  - data streams -> receivers -> rdd's -> transform and output to other systems
+  - processing of the rdd can be distrubuted among a cluster
+  - DStream
+    - discretized streams
+    - essentially the entire stream of data coming for recievers
+    - comprised of smaller rdds
+    - can run transforms and such on dstream itself
+    - can apply map functions, flatmap, filter, reduceByKey
+    - can keep track of state, like session data
+  - Windowing
+    - allow you to compute results across a longer time period than your batch interval
+    - ex: purchase info, and wanna see top sellers for the past hour, even tho rdd are made every one second
+    - window slides as time goes on, to represent batches within window interval
+    - batch interval
+      - is how often data is captured into a dstream, mostly a small time
+    - slide interval
+      - how often a windowed transformation is computed
+    - window interval
+      - how far back in time the windowed transformation goes
+  - Fault Tolerance in spark
+    - incoming data is replicated to atleast 2 worker nodes
+    - a checkpoint directory can be use dto store state in case we need to restart stream
+      - use sc.checkpoint() on your StreamingContext
+      - checkpoints are required if using stateful data
+    - Receiver Failure
+      - receivers from like twitter, kafka, or flume are only push, then lose data in crash
+      - but recievers which poll from like hdfs or directrly consumed kafka or pull based flume
+      -
