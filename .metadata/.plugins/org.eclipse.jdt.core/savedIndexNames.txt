@@ -1,0 +1,5 @@
+INDEX VERSION 1.127+/Users/asavirkalla/Documents/workspace/scala-learning/.metadata/.plugins/org.eclipse.jdt.core
+2634274922.index
+2076161997.index
+3353234052.index
+546372192.index
